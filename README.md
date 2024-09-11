@@ -43,5 +43,5 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 ### Print QR code
 
 ```bash
-./env/bin/python qr.py
+./env/bin/python qr.py -t title -url "http://raspberrypi.local/do/qr"
 ```
