@@ -1,0 +1,35 @@
+#!/bin/bash
+echo "Content-type: text/html"
+echo ""
+
+echo '<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+form {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+</style>
+</head>
+<body>
+
+<form method=POST action="/do/qr.cgi">
+<label for=title>Title</label>
+<!-- <input type=text name=title id=title > -->
+<textarea type=text name=title id=title></textarea>
+<br>
+<label for=url>URL</label>
+<input type=text name=url id=url value="http://" >
+<br>
+<button type=submit>print!</button>
+</form>
+<p>
+  To print a QR code to connect to a WiFi network, use the format (see <a href="https://qifi.org/">qifi.org</a>):
+</p>
+<pre>WIFI:S:&lt;SSID&gt;;T:WPA;P:&lt;password&gt;;;</pre>
+</body>
+</html>'
