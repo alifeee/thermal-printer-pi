@@ -28,6 +28,9 @@ justify-content: center;
 <button type=submit>print!</button>
 </form>
 <p>
+  Pure JS QR generator: <a href="https://fietkau.software/qr">https://fietkau.software/qr</a>
+</p>
+<p>
   To print a QR code to connect to a WiFi network, use the format (see <a href="https://qifi.org/">qifi.org</a>):
 </p>
 <pre>WIFI:S:&lt;SSID&gt;;T:WPA;P:&lt;password&gt;;;</pre>
