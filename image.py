@@ -28,13 +28,14 @@ def main(
         double_width=True,
         invert=False,
     )
-    p.text(name)
+    if name is not None:
+        p.text(name)
 
-    p.ln()
-    p.ln()
-    p.ln()
-    p.ln()
-    p.ln()
+        p.ln()
+        p.ln()
+        p.ln()
+        p.ln()
+        p.ln()
     p.ln()
 
     p.close()
@@ -43,18 +44,16 @@ def main(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-i",
-        "--image-fname",
+        "image_fname",
         help="filename of image to print",
         type=str,
-        required=True,
     )
     parser.add_argument(
         "-n",
         "--name",
         help="name",
         type=str,
-        required=True,
+        required=False,
     )
     args = parser.parse_args()
     main(args.image_fname, args.name)
