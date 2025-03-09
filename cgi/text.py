@@ -19,13 +19,15 @@ def error(msg):
 
 form_urlencoded = sys.stdin.read()
 data = parse_qs(form_urlencoded)
+# turn {'text': ['alfie']}
+#  into {'text': 'alfie'}
 
-text = data.get("text", [])
-if text == []:
+data = {x: y[0] for (x,y) in data.items()}
+
+text = data.get("text", "")
+if text == "":
   error('"text" is empty')
   sys.exit(1)
-
-text = text[0]
 
 print("printing text!", file=sys.stderr)
 print(text, file=sys.stderr)
