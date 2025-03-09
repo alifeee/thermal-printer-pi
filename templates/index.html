@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>thermal printer pi!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>thermal printer!</h1>
+<p>
+  click <a href="/do/ip">here</a> to get IP.
+</p>
+<p>
+  Source code for printing: <a href="https://github.com/alifeee/thermal-printer-pi">https://github.com/alifeee/thermal-printer-pi</a>
+</p>
+<p>
+  test Python CGI scripts with <a href="/do/printer/test.py">test.py</a>
+</p>
+
+<h2>print text</h2>
+<form method="POST" action="/printtext">
+  <label for="t-text">
+  <input type="text" name="text" id="t-text">
+  <button type="submit">send</button>
+</form>
+
+<h2>print QR</h2>
+<form method="POST" action="/printqr">
+  <label for="q-link">
+  <input type="text" name="link" id="q-link">
+  <button type="submit">send</button>
+</form>
+
+</body>
+</html>
