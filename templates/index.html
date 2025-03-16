@@ -1,45 +1,136 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>thermal printer pi!</title>
-<style>
-html { color-scheme: light dark; }
-body { width: 35em; margin: 0 auto;
-font-family: Tahoma, Verdana, Arial, sans-serif; }
-</style>
-</head>
-<body>
-<h1>thermal printer!</h1>
-<p>
-  click <a href="/do/ip">here</a> to get IP.
-</p>
-<p>
-  Source code for printing: <a href="https://github.com/alifeee/thermal-printer-pi">https://github.com/alifeee/thermal-printer-pi</a>
-</p>
-<p>
-  test Python CGI scripts with <a href="/do/printer/test.py">test.py</a>
-</p>
+  <head>
+    <title>thermal printer pi!</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html {
+        color-scheme: light dark;
+      }
 
-<h2>print text</h2>
-<form method="POST" action="/printtext">
-  <label for="t-text">
-  <input type="text" name="text" id="t-text">
-  <button type="submit">send</button>
-</form>
+      body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+      }
 
-<h2>print QR</h2>
-<form method="POST" action="/printqr">
-  <label for="q-link">
-  <input type="text" name="link" id="q-link">
-  <button type="submit">send</button>
-</form>
+      form {
+        margin-left: 1rem;
+      }
 
-<h2>print image</h2>
-<form method="POST" action="/printimage" enctype="multipart/form-data" >
-  <label for="i-image">
-  <input type="file" name="image" id="i-image" accept="image/*">
-  <button type="submit">send</button>
-</form>
+      .status-image {
+        background: orange;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
 
-</body>
+  <body>
+    <header>
+      <h1>thermal printer!</h1>
+    </header>
+
+    <main>
+      <p></p>
+      <p>
+        test Python CGI scripts with <a href="/do/printer/test.py">test.py</a>
+      </p>
+
+      <h2>
+        printer status:
+        <img class="status-image" src="/status_image" height="20" width="20" />
+      </h2>
+      <p>
+        orange: API not available, Python probably offline
+        <br />
+        red: API online, Printer not available (probably switched off)
+        <br />
+        green: API online, Printer online
+      </p>
+      <p>
+        troubleshooting tips: powercycle the thermal printer, powercycle the pi,
+        SSH into the pi and look at stuff
+      </p>
+
+      <br />
+      <hr />
+
+      <h2>print text</h2>
+      <p>
+        any amount of text should work. text formatting currently not supported
+        (but
+        <a
+          href="https://python-escpos.readthedocs.io/en/latest/api/escpos.html#escpos.escpos.Escpos.set"
+          >could be</a
+        >)
+      </p>
+      <form method="POST" action="/printtext">
+        <label for="t-text"></label>
+        <input type="text" name="text" id="t-text" />
+        <button type="submit">send</button>
+      </form>
+
+      <h2>print QR</h2>
+      <p>
+        You can print any text and it will be formatted as a QR code. URLs will
+        be scannable by smart-phones or scanners.
+      </p>
+      <p>
+        Also check out
+        <a href="https://fukuchi.org/works/qrencode/index.html.en">qrencode</a>,
+        <a href="https://fietkau.software/qr">pure JS QR codes</a>, and a
+        <a href="https://qifi.org/">WiFi QR code generator</a> (or put something
+        like the following in here).
+      </p>
+      <pre>WIFI:S:&lt;SSID&gt;;T:WPA;P:&lt;password&gt;;;</pre>
+      <form method="POST" action="/printqr">
+        <label for="q-link"></label>
+        <input type="text" name="link" id="q-link" />
+        <button type="submit">send</button>
+      </form>
+
+      <h2>print image</h2>
+      <p>
+        any reasonable image format should work, at any reasonable filesize.
+      </p>
+      <form method="POST" action="/printimage" enctype="multipart/form-data">
+        <label for="i-image"></label>
+        <input type="file" name="image" id="i-image" accept="image/*" />
+        <button type="submit">send</button>
+      </form>
+
+      <br />
+      <hr />
+
+      <h2>programatically printing</h2>
+      <p>
+        you could also print using curl or otherwise making HTTP POST requests.
+        Either spy on the requests above or try:
+      </p>
+      <code>
+        <pre>
+          curl 'http://alifeeepi.shhm.uk/printtext' -X POST \
+            --data 'text=my+favourite+string'
+          curl 'http://alifeeepi.shhm.uk/printtext' -X POST \
+            --data 'link=https://example.com'
+          curl 'http://alifeeepi.shhm.uk/printtext' -X POST \
+            -F "image=@image.png"
+
+            </pre
+        >
+      </code>
+    </main>
+
+    <footer>
+      <br />
+      <hr />
+      <p>
+        click <a href="/do/ip">here</a> to get IP · source code :
+        <a href="https://github.com/alifeee/thermal-printer-pi"
+          >https://github.com/alifeee/thermal-printer-pi</a
+        >
+      </p>
+    </footer>
+  </body>
 </html>

@@ -3,10 +3,12 @@
 
 import os
 import sys
-from flask import Flask, render_template, request
+from io import BytesIO
+import cairosvg
+from flask import Flask, render_template, request, send_file
 from escpos.printer import Usb
 from escpos.exceptions import USBNotFoundError, DeviceNotFoundError, ImageWidthError
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 app = Flask(__name__)
 
@@ -16,7 +18,21 @@ def homepage():
     return render_template("index.html")
 
 
-#  return "<p>Hello world</p>"
+@app.route("/status_image")
+def status_image():
+    try:
+        p = Usb(0x0416, 0x5011, profile="ZJ-5870")
+        p.set(normal_textsize=True)
+        p.close()
+        colour = "green"
+    except (USBNotFoundError, DeviceNotFoundError):
+        colour = "red"
+
+    img = Image.new("RGB", [10, 10], colour)
+    img_io = BytesIO()
+    img.save(img_io, "PNG")
+    img_io.seek(0)
+    return send_file(img_io, mimetype="image/png")
 
 
 @app.route("/printtext", methods=["POST"])
@@ -95,20 +111,36 @@ def image():
     form = request.form
     image = request.files["image"]
 
+    if image.content_type == "image/svg+xml":
+        out = BytesIO()
+        cairosvg.svg2png(file_obj=image, write_to=out)
+        image = out
+
     # pillow
-    img = Image.open(image)
+    try:
+        img = Image.open(image)
+    except UnidentifiedImageError:
+        return (
+            "couldn't open image with PIL <br>"
+            f"I see the filetype is {image.content_type}. Is it a weird filetype? <br>"
+            "I'm expecting image/png or image/jpeg or image/svg+xml or something like that"
+        )
 
     # max width of 384 px
     if img.width > 384:
         img.thumbnail([384, 1000])
 
-    p = Usb(0x0416, 0x5011, profile="ZJ-5870")
-    p.image(
-        img,
-        center=True,
-    )
+    try:
+        p = Usb(0x0416, 0x5011, profile="ZJ-5870")
+        p.image(
+            img,
+            center=True,
+        )
 
-    p.ln(4)
-    p.close()
+        p.ln(4)
+        p.close()
+    except (USBNotFoundError, DeviceNotFoundError):
+        p.close()
+        return "USB thermal printer not found... is it plugged in?"
 
-    return "done maybe"
+    return "done maybe !"
