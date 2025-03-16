@@ -1,3 +1,4 @@
+
 """a server to listen to printing requests
 """
 
@@ -127,14 +128,16 @@ def image():
         )
 
     # max width of 384 px
-    if img.width > 384:
-        img.thumbnail([384, 1000])
+    if img.width > 384 or img.height > 1100:
+        img.thumbnail([384, 1100])
 
     try:
         p = Usb(0x0416, 0x5011, profile="ZJ-5870")
+        p.ln()
         p.image(
             img,
             center=True,
+            fragment_height=500,
         )
 
         p.ln(4)
