@@ -99,3 +99,20 @@ server {
         }
 ```
 
+### test for debugging
+
+./env/bin/flask --app server run --host 0.0.0.0
+
+### enable service
+
+```bash
+# install modules
+python3 -m venv env
+./env/bin/pip install -r requirements.txt
+
+# enable systemd
+sudo cp thermalprinter.service /etc/systemd/system/thermalprinter.service
+sudo systemctl enable thermalprinter.service
+sudo systemctl start thermalprinter.service
+sudo systemctl status thermalprinter.service
+```

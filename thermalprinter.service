@@ -1,0 +1,16 @@
+[Unit]
+Description=Thermal Printer Server
+After=network.target
+
+[Service]
+User=thermalprinter
+Group=thermalprinter
+
+ExecStart=/usr/alifeee/thermalprinter/env/bin/waitress-serve --port=5000 'server:app'
+WorkingDirectory=/usr/alifeee/thermalprinter
+
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
