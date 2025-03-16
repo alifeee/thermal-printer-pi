@@ -54,3 +54,48 @@ sudo ln -s /usr/alifeee/thermalprinter/cgi/qr.cgi /var/www/cgi/do/qr.cgi
 ```bash
 ./env/bin/python qr.py -t title -url "http://raspberrypi.local/do/qr"
 ```
+
+## Using Flask server
+
+### nginx configuration
+
+```nginx
+server {
+                listen 80 default_server;
+                listen [::]:80 default_server;
+
+                index index.html;
+
+                server_name _;
+
+                # return homepage even if Flask server is off
+                location = / {
+                        alias /usr/alifeee/thermalprinter/templates/;
+                        try_files index.html =404;
+                }
+
+                # otherwise use Flask server
+                location / {
+#                       root /var/www/html;
+#                       try_files $uri $uri/ =404;
+
+                        proxy_pass http://localhost:5000;
+                        proxy_redirect off;
+                        proxy_set_header Host $http_host;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_read_timeout 900;
+                        client_max_body_size 20M;
+                }
+
+                location /do/ {
+                        root /var/www/cgi;
+                        index index.cgi;
+                        fastcgi_intercept_errors on;
+                        include fastcgi_params;
+                        fastcgi_param SCRIPT_FILENAME /var/www/cgi$fastcgi_script_name;
+                        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+                }
+        }
+```
+

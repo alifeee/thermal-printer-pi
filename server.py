@@ -6,6 +6,7 @@ import sys
 from flask import Flask, render_template, request
 from escpos.printer import Usb
 from escpos.exceptions import USBNotFoundError, DeviceNotFoundError, ImageWidthError
+from PIL import Image
 
 app = Flask(__name__)
 
@@ -94,13 +95,16 @@ def image():
     form = request.form
     image = request.files["image"]
 
-    print(image)
+    # pillow
+    img = Image.open(image)
 
-    image.save("/tmp/89175891.png")
+    # max width of 384 px
+    if img.width > 384:
+        img.thumbnail([384, 1000])
 
     p = Usb(0x0416, 0x5011, profile="ZJ-5870")
     p.image(
-        "/tmp/89175891.png",
+        img,
         center=True,
     )
 
