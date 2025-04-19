@@ -1,4 +1,3 @@
-
 """a server to listen to printing requests
 """
 
@@ -10,6 +9,7 @@ from flask import Flask, render_template, request, send_file
 from escpos.printer import Usb
 from escpos.exceptions import USBNotFoundError, DeviceNotFoundError, ImageWidthError
 from PIL import Image, UnidentifiedImageError
+import qrcode
 
 app = Flask(__name__)
 
@@ -81,20 +81,30 @@ def qr():
         # https://python-escpos.readthedocs.io/en/latest/api/escpos.html#escpos.escpos.Escpos.qr
         p = Usb(0x0416, 0x5011, profile="ZJ-5870")
         size = 16
+        error_correction = 1
+
         while True:
-            try:
-                p.qr(
-                    link,
-                    size=size,
-                    ec=1,
-                    native=False,
-                    center=False,
-                )
+            qr_code = qrcode.QRCode(
+                version=None,
+                box_size=size,
+                border=1,
+                error_correction=error_correction,
+            )
+            qr_code.add_data(link)
+            qr_code.make(fit=True)
+            qr_image = qr_code.make_image()
+            if qr_image.size[0] < 384 or size == 1:
                 break
-            except ImageWidthError:
-                size -= 1
-            if size == 1:
-                break
+            size -= 1
+
+        p.qr(
+            link,
+            size=size,
+            ec=error_correction,
+            native=False,
+            center=False,
+        )
+
         p.set(normal_textsize=True)
         p.textln(link)
         p.ln(3)
@@ -104,7 +114,7 @@ def qr():
         p.close()
         return "USB thermal printer not found... is it plugged in?"
 
-    return f"done! printed:<br> {link}"
+    return f"done! printed at pixel size {size}:<br> {link}"
 
 
 @app.route("/printimage", methods=["POST"])
