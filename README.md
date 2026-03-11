@@ -1,3 +1,5 @@
+> [!CAUTION]
+> MOVED! see <https://git.alifeee.net/thermal-printer-pi/about/>
 # Thermal Printing
 
 For more context on the printer, see:
